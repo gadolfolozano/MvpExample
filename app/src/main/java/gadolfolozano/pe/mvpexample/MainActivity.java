@@ -10,6 +10,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import gadolfolozano.pe.mvpexample.adapter.AlbumAdapter;
 import gadolfolozano.pe.mvpexample.databinding.ActivityMainBinding;
 import gadolfolozano.pe.mvpexample.mapper.AlbumMapper;
@@ -19,6 +21,9 @@ import gadolfolozano.pe.mvpexample.ws.service.GetAlbumsService;
 import gadolfolozano.pe.mvpexample.ws.service.ServiceListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    @Inject
+    GetAlbumsService getAlbumsService;
 
     private ActivityMainBinding mBinding;
 
@@ -35,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
         mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mBinding.mRecyclerView.setAdapter(mAlbumAdapter);
+        onPrepareActivity();
+    }
 
-        GetAlbumsService getAlbumsService = new GetAlbumsService("");
+    private void onPrepareActivity(){
+        initializeDagger();
         getAlbumsService.setServiceListener(new ServiceListener<List<AlbumResponse>>() {
             @Override
             public void onSucess(List<AlbumResponse> response) {
@@ -51,5 +59,9 @@ public class MainActivity extends AppCompatActivity {
         getAlbumsService.execute();
     }
 
+    private void initializeDagger() {
+        MvpApplication application = (MvpApplication) getApplication();
+        application.getRestServiceComponent().inject(this);
+    }
 
 }
