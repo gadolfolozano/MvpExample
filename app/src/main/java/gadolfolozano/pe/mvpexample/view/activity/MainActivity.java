@@ -25,37 +25,35 @@ import gadolfolozano.pe.mvpexample.ws.service.ServiceListener;
 
 public class MainActivity extends BaseActivity implements HasComponent<AlbumComponent> {
 
-    private ActivityMainBinding mBinding;
-
     private AlbumComponent albumComponent;
-
-    private AlbumAdapter mAlbumAdapter;
 
     @Inject
     GetAlbumsService getAlbumsService;
 
+    private ActivityMainBinding mBinding;
+    private AlbumAdapter mAlbumAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        performGetAlbums();
+    }
+
+    @Override
+    protected void bindViews() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+    }
 
+    @Override
+    protected void prepareActivity() {
         mAlbumAdapter = new AlbumAdapter(new ArrayList<AlbumModel>());
-
         mBinding.mRecyclerView.setHasFixedSize(true);
         mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mBinding.mRecyclerView.setAdapter(mAlbumAdapter);
-        onPrepareActivity();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    //@Override
-    protected void onPrepareActivity(){
-        initializeInjector();
+    protected void performGetAlbums(){
         getAlbumsService.setServiceListener(new ServiceListener<List<AlbumResponse>>() {
             @Override
             public void onSucess(List<AlbumResponse> response) {
@@ -70,7 +68,8 @@ public class MainActivity extends BaseActivity implements HasComponent<AlbumComp
         getAlbumsService.execute();
     }
 
-    private void initializeInjector() {
+    @Override
+    protected void initializeInjector() {
         this.albumComponent = DaggerAlbumComponent.builder()
                 //.applicationComponent(getApplicationComponent())
                 //.activityModule(getActivityModule())
@@ -80,6 +79,6 @@ public class MainActivity extends BaseActivity implements HasComponent<AlbumComp
 
     @Override
     public AlbumComponent getComponent() {
-        return null;
+        return this.albumComponent;
     }
 }

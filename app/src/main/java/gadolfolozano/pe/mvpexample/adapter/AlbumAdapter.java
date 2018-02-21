@@ -36,7 +36,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyViewHolder
             mBinding.txtTitle.setText(item.getTitle());
             mBinding.txtDescription.setText(item.getArtist());
 
-            Glide.with(mBinding.getRoot()).load(item.getThumbnailImage()).into(mBinding.imageView);
+            Glide.with(mBinding.getRoot()).load(item.getUrlImage()).into(mBinding.imageView);
         }
     }
 

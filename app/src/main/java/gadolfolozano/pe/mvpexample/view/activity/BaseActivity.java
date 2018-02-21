@@ -15,11 +15,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bindViews();
+        prepareActivity();
+        initializeInjector();
         this.getApplicationComponent().inject(this);
     }
 
     protected ApplicationComponent getApplicationComponent() {
-        return ((AndroidApplication) getApplication()).getApplicationComponent();
+        return ((AndroidApplication) getApplication()).getComponent();
     }
+
+    protected abstract void bindViews();
+    protected abstract void prepareActivity();
+    protected abstract void initializeInjector();
 
 }
