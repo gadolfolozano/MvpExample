@@ -1,5 +1,8 @@
 package gadolfolozano.pe.mvpexample.ws.service;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import gadolfolozano.pe.mvpexample.ws.APIClient;
 import gadolfolozano.pe.mvpexample.ws.APIInterface;
 import retrofit2.Call;

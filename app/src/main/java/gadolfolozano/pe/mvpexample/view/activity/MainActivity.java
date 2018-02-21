@@ -1,7 +1,6 @@
-package gadolfolozano.pe.mvpexample;
+package gadolfolozano.pe.mvpexample.view.activity;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,22 +11,28 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.adapter.AlbumAdapter;
 import gadolfolozano.pe.mvpexample.databinding.ActivityMainBinding;
+import gadolfolozano.pe.mvpexample.di.HasComponent;
+import gadolfolozano.pe.mvpexample.di.component.AlbumComponent;
+import gadolfolozano.pe.mvpexample.di.component.DaggerAlbumComponent;
 import gadolfolozano.pe.mvpexample.mapper.AlbumMapper;
 import gadolfolozano.pe.mvpexample.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.ws.response.AlbumResponse;
 import gadolfolozano.pe.mvpexample.ws.service.GetAlbumsService;
 import gadolfolozano.pe.mvpexample.ws.service.ServiceListener;
 
-public class MainActivity extends AppCompatActivity {
-
-    @Inject
-    GetAlbumsService getAlbumsService;
+public class MainActivity extends BaseActivity implements HasComponent<AlbumComponent> {
 
     private ActivityMainBinding mBinding;
 
+    private AlbumComponent albumComponent;
+
     private AlbumAdapter mAlbumAdapter;
+
+    @Inject
+    GetAlbumsService getAlbumsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,14 @@ public class MainActivity extends AppCompatActivity {
         onPrepareActivity();
     }
 
-    private void onPrepareActivity(){
-        initializeDagger();
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    //@Override
+    protected void onPrepareActivity(){
+        initializeInjector();
         getAlbumsService.setServiceListener(new ServiceListener<List<AlbumResponse>>() {
             @Override
             public void onSucess(List<AlbumResponse> response) {
@@ -59,9 +70,16 @@ public class MainActivity extends AppCompatActivity {
         getAlbumsService.execute();
     }
 
-    private void initializeDagger() {
-        MvpApplication application = (MvpApplication) getApplication();
-        application.getRestServiceComponent().inject(this);
+    private void initializeInjector() {
+        this.albumComponent = DaggerAlbumComponent.builder()
+                //.applicationComponent(getApplicationComponent())
+                //.activityModule(getActivityModule())
+                .build();
+        this.albumComponent.inject(this);
     }
 
+    @Override
+    public AlbumComponent getComponent() {
+        return null;
+    }
 }

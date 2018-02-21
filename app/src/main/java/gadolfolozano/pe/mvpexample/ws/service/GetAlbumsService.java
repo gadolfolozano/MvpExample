@@ -2,18 +2,22 @@ package gadolfolozano.pe.mvpexample.ws.service;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import gadolfolozano.pe.mvpexample.ws.response.AlbumResponse;
 import retrofit2.Call;
 
 /**
  * Created by gustavo.lozano on 2/16/2018.
  */
-
+@Singleton
 public class GetAlbumsService extends ServiceBase {
     private String hola;
 
-    public GetAlbumsService(String hola) {
-        this.hola = hola;
+    @Inject
+    public GetAlbumsService() {
+        this.hola = "";
     }
 
     @Override
