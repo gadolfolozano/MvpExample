@@ -1,10 +1,7 @@
-package gadolfolozano.pe.mvpexample.ws.service;
+package gadolfolozano.pe.mvpexample.data.ws.service;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import gadolfolozano.pe.mvpexample.ws.APIClient;
-import gadolfolozano.pe.mvpexample.ws.APIInterface;
+import gadolfolozano.pe.mvpexample.data.ws.APIClient;
+import gadolfolozano.pe.mvpexample.data.ws.APIInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

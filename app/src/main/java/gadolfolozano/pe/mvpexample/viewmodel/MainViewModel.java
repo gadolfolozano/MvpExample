@@ -7,9 +7,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import gadolfolozano.pe.mvpexample.model.AlbumModel;
-import gadolfolozano.pe.mvpexample.repository.AlbumRepository;
-import gadolfolozano.pe.mvpexample.ws.service.GetAlbumsService;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.data.repository.AlbumRepository;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.

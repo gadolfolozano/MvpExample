@@ -1,11 +1,11 @@
-package gadolfolozano.pe.mvpexample.ws.service;
+package gadolfolozano.pe.mvpexample.data.ws.service;
 
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import gadolfolozano.pe.mvpexample.ws.response.AlbumResponse;
+import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
 import retrofit2.Call;
 
 /**

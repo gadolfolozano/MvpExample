@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.model;
+package gadolfolozano.pe.mvpexample.view.model;
 
 /**
  * Created by gustavo.lozano on 2/16/2018.

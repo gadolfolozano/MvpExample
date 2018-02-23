@@ -15,11 +15,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import gadolfolozano.pe.mvpexample.R;
-import gadolfolozano.pe.mvpexample.adapter.AlbumAdapter;
+import gadolfolozano.pe.mvpexample.view.adapter.AlbumAdapter;
 import gadolfolozano.pe.mvpexample.databinding.ActivityMainBinding;
-import gadolfolozano.pe.mvpexample.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.viewmodel.MainViewModel;
-import gadolfolozano.pe.mvpexample.viewmodel.ViewModelFactory;
 
 public class MainActivity extends BaseActivity {
 

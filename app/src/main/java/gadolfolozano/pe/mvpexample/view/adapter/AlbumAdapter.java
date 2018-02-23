@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.adapter;
+package gadolfolozano.pe.mvpexample.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import gadolfolozano.pe.mvpexample.databinding.ItemAlbumBinding;
-import gadolfolozano.pe.mvpexample.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 
 /**
  * Created by gustavo.lozano on 2/16/2018.

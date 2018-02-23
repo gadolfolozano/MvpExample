@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.repository;
+package gadolfolozano.pe.mvpexample.data.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -9,10 +9,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import gadolfolozano.pe.mvpexample.mapper.AlbumMapper;
-import gadolfolozano.pe.mvpexample.model.AlbumModel;
-import gadolfolozano.pe.mvpexample.ws.response.AlbumResponse;
-import gadolfolozano.pe.mvpexample.ws.service.GetAlbumsService;
-import gadolfolozano.pe.mvpexample.ws.service.ServiceListener;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
+import gadolfolozano.pe.mvpexample.data.ws.service.GetAlbumsService;
+import gadolfolozano.pe.mvpexample.data.ws.service.ServiceListener;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.

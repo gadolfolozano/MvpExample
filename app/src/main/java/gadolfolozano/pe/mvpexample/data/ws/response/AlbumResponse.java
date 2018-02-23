@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.ws.response;
+package gadolfolozano.pe.mvpexample.data.ws.response;
 
 import com.google.gson.annotations.SerializedName;
 

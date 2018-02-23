@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.ws;
+package gadolfolozano.pe.mvpexample.data.ws;
 
 import gadolfolozano.pe.mvpexample.util.Constans;
 import okhttp3.OkHttpClient;

@@ -1,4 +1,4 @@
-package gadolfolozano.pe.mvpexample.ws.service;
+package gadolfolozano.pe.mvpexample.data.ws.service;
 
 /**
  * Created by gustavo.lozano on 2/16/2018.

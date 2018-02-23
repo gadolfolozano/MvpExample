@@ -1,8 +1,8 @@
-package gadolfolozano.pe.mvpexample.ws;
+package gadolfolozano.pe.mvpexample.data.ws;
 
 import java.util.List;
 
-import gadolfolozano.pe.mvpexample.ws.response.AlbumResponse;
+import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
