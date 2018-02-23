@@ -6,5 +6,5 @@ package gadolfolozano.pe.mvpexample.di.component;
 //@Singleton
 //@Component(modules = { AlbumModule.class })
 public interface AlbumComponent {
-    //void inject(MainActivity mainActivity);
+    //void inject(LoginActivity mainActivity);
 }

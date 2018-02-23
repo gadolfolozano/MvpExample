@@ -14,12 +14,12 @@ import gadolfolozano.pe.mvpexample.data.repository.AlbumRepository;
  * Created by gustavo.lozano on 2/23/2018.
  */
 
-public class MainViewModel extends ViewModel {
+public class LoginViewModel extends ViewModel {
     private LiveData<List<AlbumModel>> albums;
     private AlbumRepository albumRepository;
 
     @Inject // AlbumRepository parameter is provided by Dagger 2
-    public MainViewModel(AlbumRepository albumRepository) {
+    public LoginViewModel(AlbumRepository albumRepository) {
         this.albumRepository = albumRepository;
     }
 

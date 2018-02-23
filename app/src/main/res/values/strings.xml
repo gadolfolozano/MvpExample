@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">MvpExample</string>
+
+    <!-- Register Fragment -->
+    <string name="text_register_title">Regístratre</string>
+    <string name="text_register_email_hint">Email</string>
+    <string name="text_register_password_hint">Contraseña</string>
+    <string name="text_register_button">Siguiente</string>
+
+    <string name="text_sign_in_title">Ingresa</string>
+    <string name="text_sign_in_email_hint">Email</string>
+    <string name="text_sign_in_password_hint">Contraseña</string>
+    <string name="text_sign_in_next_button">Entrar</string>
+    <string name="text_sign_in_register_button">Registrarme</string>
+
 </resources>

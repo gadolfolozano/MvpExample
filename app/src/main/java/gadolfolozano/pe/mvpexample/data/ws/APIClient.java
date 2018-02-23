@@ -1,6 +1,6 @@
 package gadolfolozano.pe.mvpexample.data.ws;
 
-import gadolfolozano.pe.mvpexample.util.Constans;
+import gadolfolozano.pe.mvpexample.util.Constanst;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -30,7 +30,7 @@ public class APIClient {
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Constans.BASE_URL)
+                .baseUrl(Constanst.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .client(client)

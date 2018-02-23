@@ -4,9 +4,9 @@ package gadolfolozano.pe.mvpexample.util;
  * Created by gustavo.lozano on 2/16/2018.
  */
 
-public class Constans {
+public class Constanst {
 
-    private Constans() {
+    private Constanst() {
         throw new IllegalStateException("Utility class");
     }
 

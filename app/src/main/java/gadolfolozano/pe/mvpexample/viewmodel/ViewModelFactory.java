@@ -12,17 +12,17 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class ViewModelFactory implements ViewModelProvider.Factory {
-    private MainViewModel mViewModel;
+    private LoginViewModel mViewModel;
 
     @Inject
-    public ViewModelFactory(MainViewModel viewModel) {
+    public ViewModelFactory(LoginViewModel viewModel) {
         this.mViewModel = viewModel;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(MainViewModel.class)) {
+        if (modelClass.isAssignableFrom(LoginViewModel.class)) {
             return (T) mViewModel;
         }
         throw new IllegalArgumentException("Unknown class name");

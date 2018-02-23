@@ -1,6 +1,5 @@
 package gadolfolozano.pe.mvpexample.di.module;
 
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 
@@ -9,7 +8,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import gadolfolozano.pe.mvpexample.AndroidApplication;
-import gadolfolozano.pe.mvpexample.viewmodel.MainViewModel;
 import gadolfolozano.pe.mvpexample.viewmodel.ViewModelFactory;
 
 /**
@@ -30,7 +28,7 @@ public class ApplicationModule {
     }
 
     /*@Provides
-    ViewModel provideMainViewModel(MainViewModel viewModel) {
+    ViewModel provideMainViewModel(LoginViewModel viewModel) {
         return viewModel;
     }*/
 
