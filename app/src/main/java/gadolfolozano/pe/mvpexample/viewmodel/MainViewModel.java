@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import gadolfolozano.pe.mvpexample.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.repository.AlbumRepository;
 import gadolfolozano.pe.mvpexample.ws.service.GetAlbumsService;
@@ -17,13 +19,12 @@ public class MainViewModel extends ViewModel {
     private LiveData<List<AlbumModel>> albums;
     private AlbumRepository albumRepository;
 
-    /*@Inject // UserRepository parameter is provided by Dagger 2
-    public UserProfileViewModel(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }*/
+    @Inject // AlbumRepository parameter is provided by Dagger 2
+    public MainViewModel(AlbumRepository albumRepository) {
+        this.albumRepository = albumRepository;
+    }
 
     public void init() {
-        albumRepository = new AlbumRepository(new GetAlbumsService());
         if (this.albums != null) {
             return;
         }
