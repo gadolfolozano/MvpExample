@@ -18,7 +18,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         bindViews();
         prepareActivity();
         initializeInjector();
-        this.getApplicationComponent().inject(this);
     }
 
     protected ApplicationComponent getApplicationComponent() {
@@ -26,7 +25,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected abstract void bindViews();
+
     protected abstract void prepareActivity();
+
     protected abstract void initializeInjector();
 
 }
