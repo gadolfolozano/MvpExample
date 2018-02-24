@@ -49,4 +49,27 @@ public class UserRepository {
                 });
         return data;
     }
+
+    public LiveData<UserEntity> registerUser(String email, String password) {
+        final MutableLiveData<UserEntity> data = new MutableLiveData<>();
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (task.isSuccessful() && user != null) {
+                            UserEntity userEntity = new UserEntity();
+                            userEntity.setAuthToken(user.getUid());
+                            userEntity.setEmailAddress(user.getEmail());
+
+                            data.setValue(userEntity);
+                        } else {
+                            //TODO implements exception
+                        }
+                    }
+                });
+        return data;
+    }
+
 }

@@ -18,6 +18,9 @@ import javax.inject.Inject;
 
 import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.databinding.ActivityLoginBinding;
+import gadolfolozano.pe.mvpexample.di.component.ActivityComponent;
+import gadolfolozano.pe.mvpexample.di.component.DaggerActivityComponent;
+import gadolfolozano.pe.mvpexample.di.module.ActivityModule;
 import gadolfolozano.pe.mvpexample.view.fragment.RegisterFragment;
 import gadolfolozano.pe.mvpexample.view.fragment.SignInFragment;
 import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
@@ -34,6 +37,8 @@ public class LoginActivity extends BaseActivity {
     ViewModelProvider.Factory mViewModelFactory;
 
     private FirebaseAuth mAuth;
+
+    private ActivityComponent activityComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +72,10 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initializeInjector() {
-        getApplicationComponent().inject(this);
+        activityComponent = DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule())
+                .build();
+        activityComponent.inject(this);
     }
 
     @Override

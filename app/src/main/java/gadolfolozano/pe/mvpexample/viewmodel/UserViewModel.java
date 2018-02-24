@@ -2,6 +2,7 @@ package gadolfolozano.pe.mvpexample.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 
 import gadolfolozano.pe.mvpexample.data.entity.UserEntity;
 import gadolfolozano.pe.mvpexample.data.repository.UserRepository;
@@ -13,16 +14,33 @@ import gadolfolozano.pe.mvpexample.data.repository.UserRepository;
 public class UserViewModel extends ViewModel {
     private UserRepository userRepository;
 
-    /*@Inject // UserRepository parameter is provided by Dagger 2
     public UserViewModel(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }*/
+    }
 
     public void init() {
-        this.userRepository = new UserRepository();
+        //Do Nothing
     }
 
     public LiveData<UserEntity> signIn(String email, String password) {
         return userRepository.signIn(email, password);
+    }
+
+    public LiveData<UserEntity> registerUser(String email, String password) {
+        return userRepository.registerUser(email, password);
+    }
+
+    public static class Factory implements ViewModelProvider.Factory {
+        private final UserRepository dependency;
+
+        public Factory(UserRepository dependency) {
+            this.dependency = dependency;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public UserViewModel create(Class modelClass) {
+            return new UserViewModel(dependency);
+        }
     }
 }

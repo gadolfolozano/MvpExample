@@ -26,7 +26,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initializeInjector() {
-        getApplicationComponent().inject(this);
     }
 
 }

@@ -1,6 +1,7 @@
 package gadolfolozano.pe.mvpexample.view.fragment;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.data.entity.UserEntity;
 import gadolfolozano.pe.mvpexample.databinding.FragmentSignInBinding;
+import gadolfolozano.pe.mvpexample.di.component.DaggerUserComponent;
+import gadolfolozano.pe.mvpexample.di.component.UserComponent;
 import gadolfolozano.pe.mvpexample.util.StringValidation;
 import gadolfolozano.pe.mvpexample.view.activity.LoginActivity;
 import gadolfolozano.pe.mvpexample.viewmodel.UserViewModel;
@@ -33,8 +38,10 @@ public class SignInFragment extends BaseFragment {
     private TextWatcher mEmailTextWatcher;
     private TextWatcher mPasswordTextWathcer;
 
-    //@Inject
-    //ViewModelProvider.Factory mViewModelFactory;
+    private UserComponent userComponent;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
 
     UserViewModel viewModel;
 
@@ -60,7 +67,7 @@ public class SignInFragment extends BaseFragment {
             }
         });
 
-        viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        viewModel = ViewModelProviders.of(this, mViewModelFactory).get(UserViewModel.class);
         viewModel.init();
     }
 
@@ -124,6 +131,8 @@ public class SignInFragment extends BaseFragment {
 
     @Override
     protected void initializeInjector() {
-        getApplicationComponent().inject(this);
+        userComponent = DaggerUserComponent.builder()
+                .build();
+        userComponent.inject(this);
     }
 }

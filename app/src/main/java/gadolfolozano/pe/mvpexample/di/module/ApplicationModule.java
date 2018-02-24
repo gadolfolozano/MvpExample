@@ -1,6 +1,5 @@
 package gadolfolozano.pe.mvpexample.di.module;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -8,7 +7,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import gadolfolozano.pe.mvpexample.AndroidApplication;
-import gadolfolozano.pe.mvpexample.viewmodel.ViewModelFactory;
 
 /**
  * Created by gustavo.lozano on 2/20/2018.
@@ -25,15 +23,5 @@ public class ApplicationModule {
     @Singleton
     Context provideApplicationContext() {
         return this.application;
-    }
-
-    /*@Provides
-    ViewModel provideMainViewModel(LoginViewModel viewModel) {
-        return viewModel;
-    }*/
-
-    @Provides
-    ViewModelProvider.Factory provideViewModelFactory(ViewModelFactory factory) {
-        return factory;
     }
 }
