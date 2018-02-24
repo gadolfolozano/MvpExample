@@ -23,6 +23,7 @@ import gadolfolozano.pe.mvpexample.di.component.DaggerUserComponent;
 import gadolfolozano.pe.mvpexample.di.component.UserComponent;
 import gadolfolozano.pe.mvpexample.util.StringValidation;
 import gadolfolozano.pe.mvpexample.view.activity.LoginActivity;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 import gadolfolozano.pe.mvpexample.viewmodel.UserViewModel;
 
 /**
@@ -70,12 +71,20 @@ public class RegisterFragment extends BaseFragment {
         String email = mBinding.mEditTextEmail.getText().toString();
         String password = mBinding.mEditTextPassword.getText().toString();
 
-        viewModel.registerUser(email, password).observe(this, new Observer<UserEntity>() {
+        viewModel.registerUser(email, password).observe(this, new Observer<ModelResponse<UserEntity>>() {
             @Override
-            public void onChanged(@Nullable UserEntity userEntity) {
+            public void onChanged(@NonNull ModelResponse<UserEntity> modelResponse) {
                 dissmisLoading();
-                Toast.makeText(getContext(), " register currentUser: " + userEntity.getEmailAddress(), Toast.LENGTH_LONG).show();
-                ((LoginActivity) getActivity()).navigateToMainActivity();
+                switch (modelResponse.getStatus()){
+                    case ModelResponse.SUCCESS:
+                        UserEntity userEntity = modelResponse.getBody();
+                        Toast.makeText(getContext(), " register currentUser: " + userEntity.getEmailAddress(), Toast.LENGTH_LONG).show();
+                        ((LoginActivity) getActivity()).navigateToMainActivity();
+                        break;
+                    case ModelResponse.ERROR:
+                        Toast.makeText(getContext(), "Hubo un error al crear al usuario" , Toast.LENGTH_LONG).show();
+                        break;
+                }
             }
         });
     }

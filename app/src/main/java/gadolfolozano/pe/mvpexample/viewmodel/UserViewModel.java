@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider;
 
 import gadolfolozano.pe.mvpexample.data.entity.UserEntity;
 import gadolfolozano.pe.mvpexample.data.repository.UserRepository;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.
@@ -22,11 +23,11 @@ public class UserViewModel extends ViewModel {
         //Do Nothing
     }
 
-    public LiveData<UserEntity> signIn(String email, String password) {
+    public LiveData<ModelResponse<UserEntity>> signIn(String email, String password) {
         return userRepository.signIn(email, password);
     }
 
-    public LiveData<UserEntity> registerUser(String email, String password) {
+    public LiveData<ModelResponse<UserEntity>> registerUser(String email, String password) {
         return userRepository.registerUser(email, password);
     }
 

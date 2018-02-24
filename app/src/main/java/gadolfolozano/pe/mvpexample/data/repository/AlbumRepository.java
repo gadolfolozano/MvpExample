@@ -13,6 +13,7 @@ import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
 import gadolfolozano.pe.mvpexample.data.ws.service.GetAlbumsService;
 import gadolfolozano.pe.mvpexample.data.ws.service.ServiceListener;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.
@@ -27,18 +28,19 @@ public class AlbumRepository {
         this.getAlbumsService = getAlbumsService;
     }
 
-    public LiveData<List<AlbumModel>> getAlbums() {
-        final MutableLiveData<List<AlbumModel>> data = new MutableLiveData<>();
+    public LiveData<ModelResponse<List<AlbumModel>>> getAlbums() {
+        final MutableLiveData<ModelResponse<List<AlbumModel>>> data = new MutableLiveData<>();
+        final ModelResponse<List<AlbumModel>> modelResponse = new ModelResponse<>();
 
         getAlbumsService.setServiceListener(new ServiceListener<List<AlbumResponse>>() {
             @Override
             public void onSucess(List<AlbumResponse> response) {
-                data.setValue(AlbumMapper.toModel(response));
+                data.setValue(modelResponse.createSucces(AlbumMapper.toModel(response)));
             }
 
             @Override
             public void onError(Throwable t) {
-
+                data.setValue(modelResponse.createError(null));
             }
         });
         getAlbumsService.execute();

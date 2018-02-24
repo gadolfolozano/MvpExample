@@ -8,13 +8,14 @@ import java.util.List;
 
 import gadolfolozano.pe.mvpexample.data.repository.AlbumRepository;
 import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.
  */
 
 public class LoginViewModel extends ViewModel {
-    private LiveData<List<AlbumModel>> albums;
+    private LiveData<ModelResponse<List<AlbumModel>>> albums;
     private AlbumRepository albumRepository;
 
     public LoginViewModel(AlbumRepository albumRepository) {
@@ -28,7 +29,7 @@ public class LoginViewModel extends ViewModel {
         albums = albumRepository.getAlbums();
     }
 
-    public LiveData<List<AlbumModel>> getAlbums() {
+    public LiveData<ModelResponse<List<AlbumModel>>>  getAlbums() {
         return albums;
     }
 

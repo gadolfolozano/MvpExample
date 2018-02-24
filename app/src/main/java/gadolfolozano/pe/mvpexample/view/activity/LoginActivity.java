@@ -24,6 +24,7 @@ import gadolfolozano.pe.mvpexample.di.module.ActivityModule;
 import gadolfolozano.pe.mvpexample.view.fragment.RegisterFragment;
 import gadolfolozano.pe.mvpexample.view.fragment.SignInFragment;
 import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 import gadolfolozano.pe.mvpexample.viewmodel.LoginViewModel;
 
 public class LoginActivity extends BaseActivity {
@@ -62,9 +63,9 @@ public class LoginActivity extends BaseActivity {
 
         viewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
         viewModel.init();
-        viewModel.getAlbums().observe(this, new Observer<List<AlbumModel>>() {
+        viewModel.getAlbums().observe(this, new Observer<ModelResponse<List<AlbumModel>>>() {
             @Override
-            public void onChanged(@Nullable List<AlbumModel> albumModels) {
+            public void onChanged(@Nullable ModelResponse<List<AlbumModel>> modelResponse) {
                 //mAlbumAdapter.replaceElements(albumModels);
             }
         });

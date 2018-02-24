@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import gadolfolozano.pe.mvpexample.data.entity.UserEntity;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.
@@ -28,8 +29,9 @@ public class UserRepository {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public LiveData<UserEntity> signIn(String email, String password) {
-        final MutableLiveData<UserEntity> data = new MutableLiveData<>();
+    public LiveData<ModelResponse<UserEntity>> signIn(String email, String password) {
+        final MutableLiveData<ModelResponse<UserEntity>> data = new MutableLiveData<>();
+        final ModelResponse<UserEntity> modelResponse = new ModelResponse<>();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -41,17 +43,18 @@ public class UserRepository {
                             userEntity.setAuthToken(user.getUid());
                             userEntity.setEmailAddress(user.getEmail());
 
-                            data.setValue(userEntity);
+                            data.setValue(modelResponse.createSucces(userEntity));
                         } else {
-                            //TODO implements exception
+                            data.setValue(modelResponse.createError(null));
                         }
                     }
                 });
         return data;
     }
 
-    public LiveData<UserEntity> registerUser(String email, String password) {
-        final MutableLiveData<UserEntity> data = new MutableLiveData<>();
+    public LiveData<ModelResponse<UserEntity>> registerUser(String email, String password) {
+        final MutableLiveData<ModelResponse<UserEntity>> data = new MutableLiveData<>();
+        final ModelResponse<UserEntity> modelResponse = new ModelResponse<>();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -63,9 +66,9 @@ public class UserRepository {
                             userEntity.setAuthToken(user.getUid());
                             userEntity.setEmailAddress(user.getEmail());
 
-                            data.setValue(userEntity);
+                            data.setValue(modelResponse.createSucces(userEntity));
                         } else {
-                            //TODO implements exception
+                            data.setValue(modelResponse.createError(null));
                         }
                     }
                 });

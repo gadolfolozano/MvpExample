@@ -10,6 +10,6 @@ public class Constanst {
         throw new IllegalStateException("Utility class");
     }
 
-    public static final String BASE_URL = "https://rallycoding.herokuapp.com/";
+    public static final String BASE_URL = "https://rallycoding.herokuafpp.com/";
 
 }
