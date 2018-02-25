@@ -2,20 +2,34 @@ package gadolfolozano.pe.mvpexample.view.activity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
@@ -24,9 +38,13 @@ import gadolfolozano.pe.mvpexample.databinding.ActivityCreateEventBinding;
 import gadolfolozano.pe.mvpexample.databinding.ActivityMainBinding;
 import gadolfolozano.pe.mvpexample.view.fragment.EventsFragment;
 
-public class CreateEventActivity extends BaseActivity {
+public class CreateEventActivity extends BaseActivity implements OnMapReadyCallback {
 
     private ActivityCreateEventBinding mBinding;
+
+    private GoogleMap mGoogleMap;
+
+    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +72,10 @@ public class CreateEventActivity extends BaseActivity {
             }
         });
 
+        mBinding.imgIndicator.setVisibility(View.GONE);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                Toast.makeText(CreateEventActivity.this, "onMapReady", Toast.LENGTH_LONG).show();
-            }
-        });
+        mapFragment.getMapAsync(this);
     }
 
     private void onEditTextHourClicked() {
@@ -111,4 +125,74 @@ public class CreateEventActivity extends BaseActivity {
     protected void initializeInjector() {
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.mGoogleMap = googleMap;
+        getDeviceLocation();
+    }
+
+    private void getDeviceLocation() {
+        if(checkLocalitionPermission()){
+            updateLocationUI();
+        } else {
+            askForLocationPermission();
+        }
+
+        // A step later in the tutorial adds the code to get the device location.
+    }
+
+    private boolean checkLocalitionPermission(){
+        return ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void askForLocationPermission(){
+        ActivityCompat.requestPermissions(this,
+                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    updateLocationUI();
+                }
+            }
+        }
+    }
+
+    private void updateLocationUI() {
+        if (mGoogleMap == null || !checkLocalitionPermission()) {
+            return;
+        }
+        try {
+            mBinding.imgIndicator.setVisibility(View.VISIBLE);
+
+            mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .build();                   // Creates a CameraPosition from the builder
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        } catch (SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
 }

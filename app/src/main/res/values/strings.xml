@@ -20,4 +20,5 @@
     <string name="text_create_event_date">Fecha:</string>
     <string name="text_create_event_hour">Hora:</string>
     <string name="text_create_event_place">Lugar:</string>
+    <string name="text_create_event_save">Listo</string>
 </resources>
