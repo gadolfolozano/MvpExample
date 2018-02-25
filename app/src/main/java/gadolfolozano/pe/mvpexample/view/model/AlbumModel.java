@@ -12,6 +12,7 @@ public class AlbumModel {
     private String thumbnailImage;
 
     public AlbumModel() {
+        //Do nothing
     }
 
     public String getTitle() {

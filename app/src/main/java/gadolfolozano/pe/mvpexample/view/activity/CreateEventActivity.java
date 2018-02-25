@@ -30,6 +30,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -40,11 +47,15 @@ import gadolfolozano.pe.mvpexample.view.fragment.EventsFragment;
 
 public class CreateEventActivity extends BaseActivity implements OnMapReadyCallback {
 
+    private static final String TAG = CreateEventActivity.class.getSimpleName();
+
     private ActivityCreateEventBinding mBinding;
 
     private GoogleMap mGoogleMap;
 
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
+
+    private LatLng mSelectedPositionAtMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,31 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mBinding.btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSaveClicked();
+            }
+        });
+    }
+
+    private void onSaveClicked() {
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("events");
+        String key_event = myRef.push().getKey();
+        DatabaseReference eventRef = myRef.child(key_event);
+        eventRef.child("latitude").setValue(mSelectedPositionAtMap.latitude);
+        eventRef.child("longitude").setValue(mSelectedPositionAtMap.longitude);
+        eventRef.child("name").setValue(mBinding.editTextName.getText().toString());
+
+        DatabaseReference myUserEventsRef = database.getReference("users").child(currentUser.getUid()).child("user-events")
+                .child(key_event);
+        myUserEventsRef.child("latitude").setValue(mSelectedPositionAtMap.latitude);
+        myUserEventsRef.child("longitude").setValue(mSelectedPositionAtMap.longitude);
+        myUserEventsRef.child("name").setValue(mBinding.editTextName.getText().toString());
     }
 
     private void onEditTextHourClicked() {
@@ -90,7 +126,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         Calendar c = Calendar.getInstance();
 
         int current_month = c.get(Calendar.MONTH);
-        int current_day= c.get(Calendar.DAY_OF_MONTH);
+        int current_day = c.get(Calendar.DAY_OF_MONTH);
         int current_year = c.get(Calendar.YEAR);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -128,11 +164,20 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mGoogleMap = googleMap;
+        mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+                Log.d(TAG, "onCameraIdle");
+                mSelectedPositionAtMap = mGoogleMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+                mBinding.editTextPlace.setText("");
+                mBinding.editTextPlace.append(mSelectedPositionAtMap.latitude + "-" + mSelectedPositionAtMap.longitude);
+            }
+        });
         getDeviceLocation();
     }
 
     private void getDeviceLocation() {
-        if(checkLocalitionPermission()){
+        if (checkLocalitionPermission()) {
             updateLocationUI();
         } else {
             askForLocationPermission();
@@ -141,13 +186,13 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         // A step later in the tutorial adds the code to get the device location.
     }
 
-    private boolean checkLocalitionPermission(){
+    private boolean checkLocalitionPermission() {
         return ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void askForLocationPermission(){
+    private void askForLocationPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -181,8 +226,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
             Criteria criteria = new Criteria();
 
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            if (location != null)
-            {
+            if (location != null) {
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -191,7 +235,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
                         .build();                   // Creates a CameraPosition from the builder
                 mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

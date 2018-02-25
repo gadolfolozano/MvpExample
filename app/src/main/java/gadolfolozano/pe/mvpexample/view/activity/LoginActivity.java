@@ -30,7 +30,7 @@ import gadolfolozano.pe.mvpexample.viewmodel.LoginViewModel;
 public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding mBinding;
-    //private AlbumAdapter mAlbumAdapter;
+    //private EventAdapter mAlbumAdapter;
 
     private LoginViewModel viewModel;
 
@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void prepareActivity() {
-        /*mAlbumAdapter = new AlbumAdapter(new ArrayList<AlbumModel>());
+        /*mAlbumAdapter = new EventAdapter(new ArrayList<AlbumModel>());
         mBinding.mRecyclerView.setHasFixedSize(true);
         mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
