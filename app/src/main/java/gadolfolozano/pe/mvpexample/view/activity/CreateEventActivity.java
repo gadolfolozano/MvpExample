@@ -2,6 +2,9 @@ package gadolfolozano.pe.mvpexample.view.activity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -12,9 +15,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -22,8 +22,6 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,18 +30,18 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
+import javax.inject.Inject;
+
 import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.databinding.ActivityCreateEventBinding;
-import gadolfolozano.pe.mvpexample.databinding.ActivityMainBinding;
-import gadolfolozano.pe.mvpexample.view.fragment.EventsFragment;
+import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
+import gadolfolozano.pe.mvpexample.di.component.EventComponent;
+import gadolfolozano.pe.mvpexample.view.model.EventModel;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
+import gadolfolozano.pe.mvpexample.viewmodel.EventViewModel;
 
 public class CreateEventActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -56,6 +54,13 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
 
     private LatLng mSelectedPositionAtMap;
+
+    private EventComponent eventComponent;
+
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
+
+    EventViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,21 +102,25 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     private void onSaveClicked() {
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("events");
-        String key_event = myRef.push().getKey();
-        DatabaseReference eventRef = myRef.child(key_event);
-        eventRef.child("latitude").setValue(mSelectedPositionAtMap.latitude);
-        eventRef.child("longitude").setValue(mSelectedPositionAtMap.longitude);
-        eventRef.child("name").setValue(mBinding.editTextName.getText().toString());
-
-        DatabaseReference myUserEventsRef = database.getReference("users").child(currentUser.getUid()).child("user-events")
-                .child(key_event);
-        myUserEventsRef.child("latitude").setValue(mSelectedPositionAtMap.latitude);
-        myUserEventsRef.child("longitude").setValue(mSelectedPositionAtMap.longitude);
-        myUserEventsRef.child("name").setValue(mBinding.editTextName.getText().toString());
+        EventModel eventModel = new EventModel();
+        eventModel.setName(mBinding.editTextName.getText().toString());
+        eventModel.setLongitude(mSelectedPositionAtMap.longitude);
+        eventModel.setLatitude(mSelectedPositionAtMap.latitude);
+        viewModel.saveEvent(eventModel, currentUser.getUid()).observe(this, new Observer<ModelResponse<EventModel>>() {
+            @Override
+            public void onChanged(@Nullable ModelResponse<EventModel> modelResponse) {
+                switch (modelResponse.getStatus()) {
+                    case ModelResponse.SUCCESS:
+                        Toast.makeText(CreateEventActivity.this, "Evento creado exitosamente", Toast.LENGTH_LONG).show();
+                        finish();
+                        break;
+                    case ModelResponse.ERROR:
+                        Toast.makeText(CreateEventActivity.this, "Hubo un error al crear el evento", Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        });
     }
 
     private void onEditTextHourClicked() {
@@ -154,11 +163,15 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
 
     @Override
     protected void prepareActivity() {
-        //setSupportActionBar(mBinding.toolbar);
+        viewModel = ViewModelProviders.of(this, mViewModelFactory).get(EventViewModel.class);
+        viewModel.init();
     }
 
     @Override
     protected void initializeInjector() {
+        eventComponent = DaggerEventComponent.builder()
+                .build();
+        eventComponent.inject(this);
     }
 
     @Override

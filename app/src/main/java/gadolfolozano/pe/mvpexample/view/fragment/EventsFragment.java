@@ -1,5 +1,9 @@
 package gadolfolozano.pe.mvpexample.view.fragment;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,10 +27,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.databinding.FragmentEventsBinding;
+import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
+import gadolfolozano.pe.mvpexample.di.component.EventComponent;
+import gadolfolozano.pe.mvpexample.view.activity.CreateEventActivity;
 import gadolfolozano.pe.mvpexample.view.adapter.EventAdapter;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
+import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
+import gadolfolozano.pe.mvpexample.viewmodel.EventViewModel;
 
 /**
  * Created by gustavo.lozano on 2/23/2018.
@@ -45,12 +57,12 @@ public class EventsFragment extends BaseFragment {
 
     private EventAdapter mEventAdapter;
 
-    /*@Inject
+    @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
-    UserViewModel viewModel;
+    private EventViewModel viewModel;
 
-    private UserComponent userComponent;*/
+    private EventComponent eventComponent;
 
     public static EventsFragment newInstance(int type) {
         Bundle args = new Bundle();
@@ -68,15 +80,9 @@ public class EventsFragment extends BaseFragment {
 
     @Override
     protected void prepareActivity() {
-        /*mBinding.mBtnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBtnNextClicked();
-            }
-        });*/
+        viewModel = ViewModelProviders.of(this, mViewModelFactory).get(EventViewModel.class);
+        viewModel.init();
 
-        /*viewModel = ViewModelProviders.of(this, mViewModelFactory).get(UserViewModel.class);
-        viewModel.init();*/
         mEventsType = getArguments().getInt(TYPE_EVENT, TYPE_OTHERS_EVENTS);
 
         mEventAdapter = new EventAdapter(new ArrayList<EventModel>());
@@ -88,14 +94,31 @@ public class EventsFragment extends BaseFragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        DatabaseReference myRef;
+        //DatabaseReference myRef;
 
+        LiveData<ModelResponse<List<EventModel>>> observable;
         if (mEventsType == TYPE_MY_EVENTS) {
-            myRef = database.getReference("users").child(currentUser.getUid()).child("user-events");
+            //myRef = database.getReference("users").child(currentUser.getUid()).child("user-events");
+            observable = viewModel.getEvents(currentUser.getUid());
         } else {
-            myRef = database.getReference("events");
+            observable = viewModel.getEvents();
         }
 
+        observable.observe(this, new Observer<ModelResponse<List<EventModel>>>() {
+            @Override
+            public void onChanged(@Nullable ModelResponse<List<EventModel>> modelResponse) {
+                switch (modelResponse.getStatus()) {
+                    case ModelResponse.SUCCESS:
+                        mEventAdapter.replaceElements(modelResponse.getBody());
+                        break;
+                    case ModelResponse.ERROR:
+                        Toast.makeText(getContext(), "Hubo un error al recuperar datos", Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        });
+
+        /*
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -115,14 +138,14 @@ public class EventsFragment extends BaseFragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
 
     @Override
     protected void initializeInjector() {
-        /*userComponent = DaggerUserComponent.builder()
+        eventComponent = DaggerEventComponent.builder()
                 .build();
-        userComponent.inject(this);*/
+        eventComponent.inject(this);
     }
 }
