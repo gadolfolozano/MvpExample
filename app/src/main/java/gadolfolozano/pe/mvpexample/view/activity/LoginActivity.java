@@ -85,9 +85,9 @@ public class LoginActivity extends BaseActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Toast.makeText(this, "currentUser: " + currentUser, Toast.LENGTH_LONG).show();
         if (currentUser == null) {
-            navigateToRegister();
-        } else {
             navigateToSignIn();
+        } else {
+            navigateToMainActivity();
         }
     }
 

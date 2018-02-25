@@ -3,6 +3,7 @@
     package="gadolfolozano.pe.mvpexample">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".AndroidApplication"
@@ -12,6 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".view.activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -29,6 +35,10 @@
 
         <activity
             android:name=".view.activity.MainActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".view.activity.CreateEventActivity"
             android:screenOrientation="portrait" />
 
     </application>

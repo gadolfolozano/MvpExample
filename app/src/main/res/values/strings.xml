@@ -7,10 +7,17 @@
     <string name="text_register_password_hint">Contraseña</string>
     <string name="text_register_button">Siguiente</string>
 
+    <!-- Sign in Fragment -->
     <string name="text_sign_in_title">Ingresa</string>
     <string name="text_sign_in_email_hint">Email</string>
     <string name="text_sign_in_password_hint">Contraseña</string>
     <string name="text_sign_in_next_button">Entrar</string>
     <string name="text_sign_in_register_button">Registrarme</string>
 
+    <!-- Create event -->
+    <string name="text_create_event_title">Crear Evento</string>
+    <string name="text_create_event_name">Nombre:</string>
+    <string name="text_create_event_date">Fecha:</string>
+    <string name="text_create_event_hour">Hora:</string>
+    <string name="text_create_event_place">Lugar:</string>
 </resources>
