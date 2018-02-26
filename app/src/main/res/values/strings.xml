@@ -29,6 +29,9 @@
     <!-- Detail event -->
     <string name="text_detail_event_title">Detalle de Evento</string>
 
+    <!-- Detail erolled -->
+    <string name="text_erolled_user_title">Participantes</string>
+
     <string name="menu_logout">LogOut</string>
     <string name="menu_enroll">Inscribirme</string>
     <string name="menu_show_erolled">Ver Participantes</string>

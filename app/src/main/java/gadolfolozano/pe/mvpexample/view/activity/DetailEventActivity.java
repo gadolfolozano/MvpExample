@@ -40,6 +40,7 @@ import gadolfolozano.pe.mvpexample.databinding.ActivityDetailEventBinding;
 import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
 import gadolfolozano.pe.mvpexample.di.component.EventComponent;
 import gadolfolozano.pe.mvpexample.util.Constanst;
+import gadolfolozano.pe.mvpexample.view.dialog.EnrolledDialogFragment;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 import gadolfolozano.pe.mvpexample.viewmodel.EventViewModel;
@@ -159,11 +160,19 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
                 enrollToEvent();
                 return true;
             case R.id.action_show_erolled:
+                showEnrolled();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    private void showEnrolled(){
+        EnrolledDialogFragment enrolledDialogFragment =
+                EnrolledDialogFragment.newInstance(eventModel.getId());
+        enrolledDialogFragment.setCancelable(true);
+        enrolledDialogFragment.show(getSupportFragmentManager(), null);
     }
 
     private void enrollToEvent() {
