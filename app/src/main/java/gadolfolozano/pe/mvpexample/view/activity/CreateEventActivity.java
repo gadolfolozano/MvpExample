@@ -31,7 +31,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -39,6 +44,7 @@ import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.databinding.ActivityCreateEventBinding;
 import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
 import gadolfolozano.pe.mvpexample.di.component.EventComponent;
+import gadolfolozano.pe.mvpexample.util.Constanst;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 import gadolfolozano.pe.mvpexample.viewmodel.EventViewModel;
@@ -102,11 +108,23 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     private void onSaveClicked() {
+        String dateString = String.format(Locale.getDefault(), "%s %s", mBinding.editTextDate.getText(), mBinding.editTextHour.getText());
+        DateFormat formatter = new SimpleDateFormat(Constanst.DATE_FORMAT, Locale.getDefault());
+        Date date = Calendar.getInstance().getTime();
+        try {
+            date = formatter.parse(dateString);
+        } catch (ParseException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+        Log.d("Date", "time " + date.getTime());
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         EventModel eventModel = new EventModel();
         eventModel.setName(mBinding.editTextName.getText().toString());
         eventModel.setLongitude(mSelectedPositionAtMap.longitude);
         eventModel.setLatitude(mSelectedPositionAtMap.latitude);
+        eventModel.setLocale(mBinding.editTextPlace.getText().toString());
+        eventModel.setTimeStamp(date.getTime());
         viewModel.saveEvent(eventModel, currentUser.getUid()).observe(this, new Observer<ModelResponse<EventModel>>() {
             @Override
             public void onChanged(@Nullable ModelResponse<EventModel> modelResponse) {
@@ -141,7 +159,8 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                mBinding.editTextDate.setText(day + "/" + (month + 1) + "/" + year);
+                String dateString = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month + 1, year);
+                mBinding.editTextDate.setText(dateString);
             }
         }, current_year, current_month, current_day);
         datePickerDialog.show();
@@ -155,7 +174,8 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                mBinding.editTextHour.setText(hourOfDay + ":" + minute);
+                String hourString = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+                mBinding.editTextHour.setText(hourString);
             }
         }, current_hour, current_minute, true);
         timePickerDialog.show();

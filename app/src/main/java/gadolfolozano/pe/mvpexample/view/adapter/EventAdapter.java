@@ -5,9 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import gadolfolozano.pe.mvpexample.databinding.ItemEventBinding;
+import gadolfolozano.pe.mvpexample.util.Constanst;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 
 /**
@@ -32,7 +36,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
         private void bind(EventModel item) {
             mBinding.txtTitle.setText(item.getName());
-            mBinding.txtDescription.setText(item.getLatitude() + "");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constanst.DATE_FORMAT, Locale.getDefault());
+            Date date = new Date(item.getTimeStamp());
+            mBinding.txtDate.setText(simpleDateFormat.format(date));
 
             //Glide.with(mBinding.getRoot()).load(item.getUrlImage()).into(mBinding.imageView);
         }

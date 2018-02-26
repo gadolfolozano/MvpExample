@@ -16,6 +16,7 @@ public class EventModel {
     private String locale;
     private double latitude;
     private double longitude;
+    private long timeStamp;
 
     public EventModel(){
         //Do nothing, required for map firebase
@@ -53,6 +54,14 @@ public class EventModel {
         this.longitude = longitude;
     }
 
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -60,7 +69,7 @@ public class EventModel {
         result.put("latitude", latitude);
         result.put("longitude", longitude);
         result.put("locale", locale);
-
+        result.put("timeStamp", timeStamp);
         return result;
     }
 }

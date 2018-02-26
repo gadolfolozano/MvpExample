@@ -11,5 +11,6 @@ public class Constanst {
     }
 
     public static final String BASE_URL = "https://rallycoding.herokuafpp.com/";
+    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
 }
