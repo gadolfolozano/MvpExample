@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.location.Criteria;
@@ -108,6 +109,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     }
 
     private void onSaveClicked() {
+        showLoading();
         String dateString = String.format(Locale.getDefault(), "%s %s", mBinding.editTextDate.getText(), mBinding.editTextHour.getText());
         DateFormat formatter = new SimpleDateFormat(Constanst.DATE_FORMAT, Locale.getDefault());
         Date date = Calendar.getInstance().getTime();
@@ -128,9 +130,12 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         viewModel.saveEvent(eventModel, currentUser.getUid()).observe(this, new Observer<ModelResponse<EventModel>>() {
             @Override
             public void onChanged(@Nullable ModelResponse<EventModel> modelResponse) {
+                dissmisLoading();
                 switch (modelResponse.getStatus()) {
                     case ModelResponse.SUCCESS:
                         Toast.makeText(CreateEventActivity.this, "Evento creado exitosamente", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent();
+                        setResult(RESULT_OK, intent);
                         finish();
                         break;
                     case ModelResponse.ERROR:

@@ -62,6 +62,18 @@ public class MainActivity extends BaseActivity {
         startActivityForResult(new Intent(this, CreateEventActivity.class), CREATE_EVENT_REQUEST);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CREATE_EVENT_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    ((EventsFragment) mBinding.viewPager.getAdapter().instantiateItem(mBinding.viewPager, 0)).loadEvents();
+                }
+                break;
+        }
+    }
+
     private void navigateToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
@@ -118,7 +130,14 @@ public class MainActivity extends BaseActivity {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            return "fragment " + position;
+            switch (position) {
+                case 0:
+                    return getString(R.string.text_my_events);
+                case 1:
+                    return getString(R.string.text_other_events);
+                default:
+                    throw new IllegalStateException("Not fragment defined");
+            }
         }
     }
 

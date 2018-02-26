@@ -1,7 +1,5 @@
 package gadolfolozano.pe.mvpexample.view.activity;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -17,31 +15,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.DatePicker;
-import android.widget.TimePicker;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import gadolfolozano.pe.mvpexample.R;
-import gadolfolozano.pe.mvpexample.databinding.ActivityCreateEventBinding;
 import gadolfolozano.pe.mvpexample.databinding.ActivityDetailEventBinding;
 import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
 import gadolfolozano.pe.mvpexample.di.component.EventComponent;
@@ -60,16 +54,14 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
 
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
 
-    private LatLng mSelectedPositionAtMap;
-
     public static final String EXTRA_EVENT = "bundle_event";
 
-    //private EventComponent eventComponent;
+    private EventComponent eventComponent;
 
-    //@Inject
-    //ViewModelProvider.Factory mViewModelFactory;
+    @Inject
+    ViewModelProvider.Factory mViewModelFactory;
 
-    //EventViewModel viewModel;
+    EventViewModel viewModel;
 
     private EventModel eventModel;
 
@@ -99,30 +91,22 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
     }
 
 
-
     @Override
     protected void prepareActivity() {
-        //viewModel = ViewModelProviders.of(this, mViewModelFactory).get(EventViewModel.class);
-        //viewModel.init();
+        viewModel = ViewModelProviders.of(this, mViewModelFactory).get(EventViewModel.class);
+        viewModel.init();
     }
 
     @Override
     protected void initializeInjector() {
-        /*eventComponent = DaggerEventComponent.builder()
+        eventComponent = DaggerEventComponent.builder()
                 .build();
-        eventComponent.inject(this);*/
+        eventComponent.inject(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mGoogleMap = googleMap;
-        mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-                Log.d(TAG, "onCameraIdle");
-                mSelectedPositionAtMap = mGoogleMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
-            }
-        });
         getDeviceLocation();
     }
 
@@ -132,8 +116,6 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
         } else {
             askForLocationPermission();
         }
-
-        // A step later in the tutorial adds the code to get the device location.
     }
 
     private boolean checkLocalitionPermission() {
@@ -162,6 +144,47 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail_event, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_enroll:
+                enrollToEvent();
+                return true;
+            case R.id.action_show_erolled:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    private void enrollToEvent() {
+        showLoading();
+        viewModel.enrollToEvent(eventModel.getId(), FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .observe(this, new Observer<ModelResponse<EventModel>>() {
+                    @Override
+                    public void onChanged(@Nullable ModelResponse<EventModel> modelResponse) {
+                        dissmisLoading();
+                        switch (modelResponse.getStatus()) {
+                            case ModelResponse.SUCCESS:
+                                Toast.makeText(DetailEventActivity.this, "Fuiste agregado al evento", Toast.LENGTH_LONG).show();
+                                break;
+                            case ModelResponse.ERROR:
+                                Toast.makeText(DetailEventActivity.this, "Lo sentimos, ocurrió un error", Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+    }
+
     private void updateLocationUI() {
         if (mGoogleMap == null || !checkLocalitionPermission()) {
             return;
@@ -174,14 +197,28 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
             Criteria criteria = new Criteria();
 
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            Log.d("MAP: %s", "Current location " + location);
             if (location != null) {
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+                LatLng mCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                LatLng eventLocation = new LatLng(eventModel.getLatitude(), eventModel.getLongitude());
 
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                        .zoom(17)                   // Sets the zoom
-                        .build();                   // Creates a CameraPosition from the builder
-                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(mCurrentLocation).title("You"));
+
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(eventLocation).title(eventModel.getName()));
+
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(mCurrentLocation);
+                builder.include(eventLocation);
+                LatLngBounds bounds = builder.build();
+
+                int width = getResources().getDisplayMetrics().widthPixels;
+                int height = getResources().getDisplayMetrics().heightPixels;
+                int padding = (int) (width * 0.20); // offset from edges of the map 20% of screen
+
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                mGoogleMap.animateCamera(cu);
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());

@@ -1,5 +1,6 @@
 package gadolfolozano.pe.mvpexample.view.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,6 +12,8 @@ import gadolfolozano.pe.mvpexample.di.component.ApplicationComponent;
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +32,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected abstract void prepareActivity();
 
     protected abstract void initializeInjector();
+
+    protected void showLoading() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+        }
+        mProgressDialog.show();
+    }
+
+    protected void dissmisLoading() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
 
 }

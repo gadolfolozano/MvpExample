@@ -37,6 +37,10 @@ public class EventViewModel extends ViewModel {
         return eventRepository.getEvents(userId);
     }
 
+    public LiveData<ModelResponse<EventModel>> enrollToEvent(String eventId, String userId) {
+        return eventRepository.enrollToEvent(eventId, userId);
+    }
+
     public static class Factory implements ViewModelProvider.Factory {
         private final EventRepository dependency;
 

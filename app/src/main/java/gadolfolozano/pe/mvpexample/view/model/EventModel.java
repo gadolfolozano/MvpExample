@@ -15,6 +15,7 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class EventModel implements Parcelable {
 
+    private String id;
     private String name;
     private String locale;
     private double latitude;
@@ -26,6 +27,7 @@ public class EventModel implements Parcelable {
     }
 
     protected EventModel(Parcel in) {
+        id = in.readString();
         name = in.readString();
         locale = in.readString();
         latitude = in.readDouble();
@@ -44,6 +46,14 @@ public class EventModel implements Parcelable {
             return new EventModel[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -103,6 +113,7 @@ public class EventModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeString(locale);
         parcel.writeDouble(latitude);

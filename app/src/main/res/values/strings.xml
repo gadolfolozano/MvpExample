@@ -14,6 +14,10 @@
     <string name="text_sign_in_next_button">Entrar</string>
     <string name="text_sign_in_register_button">Registrarme</string>
 
+    <!-- Events List -->
+    <string name="text_my_events">Mis Eventos</string>
+    <string name="text_other_events">Otros Eventos</string>
+
     <!-- Create event -->
     <string name="text_create_event_title">Crear Evento</string>
     <string name="text_create_event_name">Nombre:</string>
@@ -26,4 +30,6 @@
     <string name="text_detail_event_title">Detalle de Evento</string>
 
     <string name="menu_logout">LogOut</string>
+    <string name="menu_enroll">Inscribirme</string>
+    <string name="menu_show_erolled">Ver Participantes</string>
 </resources>

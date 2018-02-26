@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
+import gadolfolozano.pe.mvpexample.view.model.UserModel;
 
 /**
  * Created by adolfo on 25/02/18.
@@ -31,21 +32,34 @@ public class EventRepository {
         mDatabase = FirebaseDatabase.getInstance();
     }
 
-    public LiveData<ModelResponse<EventModel>> saveEvent(EventModel eventModel, String userId) {
+    public LiveData<ModelResponse<EventModel>> saveEvent(final EventModel eventModel, final String userId) {
 
         final MutableLiveData<ModelResponse<EventModel>> data = new MutableLiveData<>();
         final ModelResponse<EventModel> modelResponse = new ModelResponse<>();
 
         DatabaseReference myRef = mDatabase.getReference("events");
-        String key_event = myRef.push().getKey();
-        DatabaseReference eventRef = myRef.child(key_event);
+        final String eventId = myRef.push().getKey();
+        DatabaseReference eventRef = myRef.child(eventId);
         eventRef.setValue(eventModel);
 
         DatabaseReference myUserEventsRef = mDatabase.getReference("users").child(userId).child("user-events")
-                .child(key_event);
+                .child(eventId);
         myUserEventsRef.setValue(eventModel);
 
-        data.setValue(modelResponse.createSucces(eventModel));
+        mDatabase.getReference("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                userModel.setId(dataSnapshot.getKey());
+                mDatabase.getReference("events").child(eventId).child("enrolled").child(userId).setValue(userModel);
+                data.setValue(modelResponse.createSucces(eventModel));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                data.setValue(modelResponse.createError(null));
+            }
+        });
 
         return data;
     }
@@ -66,11 +80,9 @@ public class EventRepository {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<EventModel> eventModels = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    /*EventModel eventModel = new EventModel();
-                    eventModel.setName(postSnapshot.child("name").getValue(String.class));
-                    eventModel.setLatitude(postSnapshot.child("latitude").getValue(Double.class));
-                    eventModel.setLongitude(postSnapshot.child("longitude").getValue(Double.class));*/
-                    eventModels.add(postSnapshot.getValue(EventModel.class));
+                    EventModel eventModel = postSnapshot.getValue(EventModel.class);
+                    eventModel.setId(postSnapshot.getKey());
+                    eventModels.add(eventModel);
                 }
                 data.setValue(modelResponse.createSucces(eventModels));
             }
@@ -80,6 +92,44 @@ public class EventRepository {
                 data.setValue(modelResponse.createError(null));
             }
         });
+        return data;
+    }
+
+    public LiveData<ModelResponse<EventModel>> enrollToEvent(final String eventId, final String userId) {
+
+        final MutableLiveData<ModelResponse<EventModel>> data = new MutableLiveData<>();
+        final ModelResponse<EventModel> modelResponse = new ModelResponse<>();
+
+        mDatabase.getReference("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final UserModel userModel = dataSnapshot.getValue(UserModel.class);
+                userModel.setId(dataSnapshot.getKey());
+
+                mDatabase.getReference("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        EventModel eventModel = dataSnapshot.getValue(EventModel.class);
+
+                        mDatabase.getReference("events").child(eventId).child("enrolled").child(userId).setValue(userModel);
+                        mDatabase.getReference("users").child(userId).child("user-events").child(eventId).setValue(eventModel);
+
+                        data.setValue(modelResponse.createSucces(eventModel));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        data.setValue(modelResponse.createError(null));
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                data.setValue(modelResponse.createError(null));
+            }
+        });
+
         return data;
     }
 

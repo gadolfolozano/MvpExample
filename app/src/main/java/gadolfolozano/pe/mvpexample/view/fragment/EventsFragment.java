@@ -92,6 +92,23 @@ public class EventsFragment extends BaseFragment {
             }
         });
 
+        loadEvents();
+    }
+
+    private void navigateToDetailEvent(EventModel selectedItem){
+        Intent intent = new Intent(getActivity(), DetailEventActivity.class);
+        intent.putExtra(DetailEventActivity.EXTRA_EVENT, selectedItem);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void initializeInjector() {
+        eventComponent = DaggerEventComponent.builder()
+                .build();
+        eventComponent.inject(this);
+    }
+
+    public void loadEvents() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         LiveData<ModelResponse<List<EventModel>>> observable;
@@ -114,18 +131,5 @@ public class EventsFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    private void navigateToDetailEvent(EventModel selectedItem){
-        Intent intent = new Intent(getActivity(), DetailEventActivity.class);
-        intent.putExtra(DetailEventActivity.EXTRA_EVENT, selectedItem);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void initializeInjector() {
-        eventComponent = DaggerEventComponent.builder()
-                .build();
-        eventComponent.inject(this);
     }
 }
