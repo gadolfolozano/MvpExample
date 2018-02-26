@@ -1,5 +1,8 @@
 package gadolfolozano.pe.mvpexample.view.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -10,7 +13,7 @@ import java.util.Map;
  * Created by adolfo on 25/02/18.
  */
 @IgnoreExtraProperties
-public class EventModel {
+public class EventModel implements Parcelable {
 
     private String name;
     private String locale;
@@ -18,9 +21,29 @@ public class EventModel {
     private double longitude;
     private long timeStamp;
 
-    public EventModel(){
+    public EventModel() {
         //Do nothing, required for map firebase
     }
+
+    protected EventModel(Parcel in) {
+        name = in.readString();
+        locale = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        timeStamp = in.readLong();
+    }
+
+    public static final Creator<EventModel> CREATOR = new Creator<EventModel>() {
+        @Override
+        public EventModel createFromParcel(Parcel in) {
+            return new EventModel(in);
+        }
+
+        @Override
+        public EventModel[] newArray(int size) {
+            return new EventModel[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -71,5 +94,19 @@ public class EventModel {
         result.put("locale", locale);
         result.put("timeStamp", timeStamp);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(locale);
+        parcel.writeDouble(latitude);
+        parcel.writeDouble(longitude);
+        parcel.writeLong(timeStamp);
     }
 }

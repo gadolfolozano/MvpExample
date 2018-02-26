@@ -43,11 +43,11 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/text_create_event_date"
             android:inputType="text"
             android:textSize="12sp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextName" />
@@ -60,11 +60,11 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:hint="@string/text_create_event_hour"
             android:inputType="textPersonName"
             android:textSize="12sp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
@@ -96,8 +96,7 @@
             app:layout_constraintBottom_toTopOf="@+id/btnSave"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPlace"
-            tools:context="com.example.adolfo.myapplicationmap.MapsActivity" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextPlace" />
 
         <Button
             android:id="@+id/btnSave"

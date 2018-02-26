@@ -20,8 +20,9 @@ import gadolfolozano.pe.mvpexample.view.model.EventModel;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
     private List<EventModel> mDataset;
+    private RecyclerAdapterListener recyclerAdapterListener;
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyViewHolder extends RecyclerView.ViewHolder{
         private ItemEventBinding mBinding;
 
         private MyViewHolder(ItemEventBinding binding) {
@@ -29,18 +30,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             this.mBinding = binding;
         }
 
-        @Override
-        public void onClick(View view) {
-
-        }
-
-        private void bind(EventModel item) {
+        private void bind(final EventModel item) {
             mBinding.txtTitle.setText(item.getName());
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constanst.DATE_FORMAT, Locale.getDefault());
             Date date = new Date(item.getTimeStamp());
             mBinding.txtDate.setText(simpleDateFormat.format(date));
 
-            //Glide.with(mBinding.getRoot()).load(item.getUrlImage()).into(mBinding.imageView);
+            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(recyclerAdapterListener!=null){
+                        recyclerAdapterListener.onItemClick(item);
+                    }
+                }
+            });
         }
     }
 
@@ -68,5 +71,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public void replaceElements(List<EventModel> events) {
         mDataset = events;
         notifyDataSetChanged();
+    }
+
+    public void setRecyclerAdapterListener(RecyclerAdapterListener listener){
+        this.recyclerAdapterListener = listener;
+    }
+
+    public interface RecyclerAdapterListener {
+        void onItemClick(EventModel selectedItem);
     }
 }

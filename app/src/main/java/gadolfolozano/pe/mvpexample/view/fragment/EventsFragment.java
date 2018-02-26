@@ -4,13 +4,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +18,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +28,7 @@ import gadolfolozano.pe.mvpexample.R;
 import gadolfolozano.pe.mvpexample.databinding.FragmentEventsBinding;
 import gadolfolozano.pe.mvpexample.di.component.DaggerEventComponent;
 import gadolfolozano.pe.mvpexample.di.component.EventComponent;
-import gadolfolozano.pe.mvpexample.view.activity.CreateEventActivity;
+import gadolfolozano.pe.mvpexample.view.activity.DetailEventActivity;
 import gadolfolozano.pe.mvpexample.view.adapter.EventAdapter;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
@@ -90,15 +85,17 @@ public class EventsFragment extends BaseFragment {
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mBinding.recyclerView.setAdapter(mEventAdapter);
+        mEventAdapter.setRecyclerAdapterListener(new EventAdapter.RecyclerAdapterListener() {
+            @Override
+            public void onItemClick(EventModel selectedItem) {
+                navigateToDetailEvent(selectedItem);
+            }
+        });
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        //DatabaseReference myRef;
 
         LiveData<ModelResponse<List<EventModel>>> observable;
         if (mEventsType == TYPE_MY_EVENTS) {
-            //myRef = database.getReference("users").child(currentUser.getUid()).child("user-events");
             observable = viewModel.getEvents(currentUser.getUid());
         } else {
             observable = viewModel.getEvents();
@@ -117,30 +114,13 @@ public class EventsFragment extends BaseFragment {
                 }
             }
         });
-
-        /*
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<EventModel> eventModels = new ArrayList<>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Log.d(TAG, "postSnapshot " + postSnapshot);
-                    EventModel eventModel = new EventModel();
-                    eventModel.setName(postSnapshot.child("name").getValue(String.class));
-                    eventModel.setLatitude(postSnapshot.child("latitude").getValue(Double.class));
-                    eventModel.setLongitude(postSnapshot.child("longitude").getValue(Double.class));
-                    eventModels.add(eventModel);
-                }
-                mEventAdapter.replaceElements(eventModels);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
+    private void navigateToDetailEvent(EventModel selectedItem){
+        Intent intent = new Intent(getActivity(), DetailEventActivity.class);
+        intent.putExtra(DetailEventActivity.EXTRA_EVENT, selectedItem);
+        startActivity(intent);
+    }
 
     @Override
     protected void initializeInjector() {
