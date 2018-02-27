@@ -9,7 +9,7 @@ public class ModelResponse<T> {
     public static final int ERROR = 0;
 
     public ModelResponse(){
-        int status = ERROR;
+        this.status = ERROR;
     }
 
     private ModelResponse(int status, T body){

@@ -25,6 +25,11 @@ import gadolfolozano.pe.mvpexample.view.model.UserModel;
 @Singleton
 public class EventRepository {
 
+    private static final String EVENTS = "events";
+    private static final String USERS = "users";
+    private static final String USERS_EVENTS = "user-events";
+    private static final String ENROLLED = "enrolled";
+
     FirebaseDatabase mDatabase;
 
     @Inject
@@ -37,21 +42,21 @@ public class EventRepository {
         final MutableLiveData<ModelResponse<EventModel>> data = new MutableLiveData<>();
         final ModelResponse<EventModel> modelResponse = new ModelResponse<>();
 
-        DatabaseReference myRef = mDatabase.getReference("events");
+        DatabaseReference myRef = mDatabase.getReference(EVENTS);
         final String eventId = myRef.push().getKey();
         DatabaseReference eventRef = myRef.child(eventId);
         eventRef.setValue(eventModel);
 
-        DatabaseReference myUserEventsRef = mDatabase.getReference("users").child(userId).child("user-events")
+        DatabaseReference myUserEventsRef = mDatabase.getReference(USERS).child(userId).child(USERS_EVENTS)
                 .child(eventId);
         myUserEventsRef.setValue(eventModel);
 
-        mDatabase.getReference("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.getReference(USERS).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final UserModel userModel = dataSnapshot.getValue(UserModel.class);
                 userModel.setId(dataSnapshot.getKey());
-                mDatabase.getReference("events").child(eventId).child("enrolled").child(userId).setValue(userModel);
+                mDatabase.getReference(EVENTS).child(eventId).child(ENROLLED).child(userId).setValue(userModel);
                 data.setValue(modelResponse.createSucces(eventModel));
             }
 
@@ -65,11 +70,11 @@ public class EventRepository {
     }
 
     public LiveData<ModelResponse<List<EventModel>>> getEvents() {
-        return getEvents(mDatabase.getReference("events"));
+        return getEvents(mDatabase.getReference(EVENTS));
     }
 
     public LiveData<ModelResponse<List<EventModel>>> getEvents(String userId) {
-        return getEvents(mDatabase.getReference("users").child(userId).child("user-events"));
+        return getEvents(mDatabase.getReference(USERS).child(userId).child(USERS_EVENTS));
     }
 
     private LiveData<ModelResponse<List<EventModel>>> getEvents(DatabaseReference databaseReference) {
@@ -100,19 +105,19 @@ public class EventRepository {
         final MutableLiveData<ModelResponse<EventModel>> data = new MutableLiveData<>();
         final ModelResponse<EventModel> modelResponse = new ModelResponse<>();
 
-        mDatabase.getReference("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.getReference(USERS).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final UserModel userModel = dataSnapshot.getValue(UserModel.class);
                 userModel.setId(dataSnapshot.getKey());
 
-                mDatabase.getReference("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+                mDatabase.getReference(EVENTS).child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         EventModel eventModel = dataSnapshot.getValue(EventModel.class);
 
-                        mDatabase.getReference("events").child(eventId).child("enrolled").child(userId).setValue(userModel);
-                        mDatabase.getReference("users").child(userId).child("user-events").child(eventId).setValue(eventModel);
+                        mDatabase.getReference(EVENTS).child(eventId).child(ENROLLED).child(userId).setValue(userModel);
+                        mDatabase.getReference(USERS).child(userId).child(USERS_EVENTS).child(eventId).setValue(eventModel);
 
                         data.setValue(modelResponse.createSucces(eventModel));
                     }
@@ -134,7 +139,7 @@ public class EventRepository {
     }
 
     public LiveData<ModelResponse<List<UserModel>>> getEnrolleds(String eventId) {
-        DatabaseReference ref = mDatabase.getReference("events").child(eventId).child("enrolled");
+        DatabaseReference ref = mDatabase.getReference(EVENTS).child(eventId).child(ENROLLED);
 
         final MutableLiveData<ModelResponse<List<UserModel>>> data = new MutableLiveData<>();
         final ModelResponse<List<UserModel>> modelResponse = new ModelResponse<>();

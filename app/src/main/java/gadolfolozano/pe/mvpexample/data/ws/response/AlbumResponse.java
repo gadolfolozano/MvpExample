@@ -61,7 +61,7 @@ public class AlbumResponse implements Serializable {
         return thumbnailImage;
     }
 
-    public void setThumbnailImage(String thumbnail_image) {
-        this.thumbnailImage = thumbnail_image;
+    public void setThumbnailImage(String thumbnailImage) {
+        this.thumbnailImage = thumbnailImage;
     }
 }

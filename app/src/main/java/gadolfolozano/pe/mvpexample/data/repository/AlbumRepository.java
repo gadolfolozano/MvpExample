@@ -8,11 +8,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import gadolfolozano.pe.mvpexample.mapper.AlbumMapper;
-import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
 import gadolfolozano.pe.mvpexample.data.ws.service.GetAlbumsService;
 import gadolfolozano.pe.mvpexample.data.ws.service.ServiceListener;
+import gadolfolozano.pe.mvpexample.mapper.AlbumMapper;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
 
 /**

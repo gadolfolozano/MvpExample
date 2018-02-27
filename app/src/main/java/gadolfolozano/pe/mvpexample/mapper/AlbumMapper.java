@@ -3,8 +3,8 @@ package gadolfolozano.pe.mvpexample.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 import gadolfolozano.pe.mvpexample.data.ws.response.AlbumResponse;
+import gadolfolozano.pe.mvpexample.view.model.AlbumModel;
 
 /**
  * Created by gustavo.lozano on 2/19/2018.

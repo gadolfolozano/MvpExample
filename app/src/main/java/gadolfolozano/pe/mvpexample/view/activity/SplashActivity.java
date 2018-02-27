@@ -20,7 +20,7 @@ public class SplashActivity extends BaseActivity {
                 startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 finish();
             }
-        }, secondsDelayed * 1000);
+        }, secondsDelayed * 1000l);
     }
 
     @Override

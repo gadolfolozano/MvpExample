@@ -12,12 +12,12 @@ import android.databinding.DataBindingUtil;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -58,7 +58,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
 
     private GoogleMap mGoogleMap;
 
-    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
 
     private LatLng mSelectedPositionAtMap;
 
@@ -68,11 +68,6 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     ViewModelProvider.Factory mViewModelFactory;
 
     EventViewModel viewModel;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     protected void bindViews() {
@@ -137,6 +132,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
                         Intent intent = new Intent();
                         setResult(RESULT_OK, intent);
                         finish();
+                        overridePendingTransition(R.anim.transition_left_to_right, R.anim.transition_left_to_right_out);
                         break;
                     case ModelResponse.ERROR:
                         Toast.makeText(CreateEventActivity.this, "Hubo un error al crear el evento", Toast.LENGTH_LONG).show();
@@ -157,9 +153,9 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
     private void showDatePicker() {
         Calendar c = Calendar.getInstance();
 
-        int current_month = c.get(Calendar.MONTH);
-        int current_day = c.get(Calendar.DAY_OF_MONTH);
-        int current_year = c.get(Calendar.YEAR);
+        int currentMonth = c.get(Calendar.MONTH);
+        int currentDay = c.get(Calendar.DAY_OF_MONTH);
+        int currentYear = c.get(Calendar.YEAR);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -167,7 +163,7 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
                 String dateString = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month + 1, year);
                 mBinding.editTextDate.setText(dateString);
             }
-        }, current_year, current_month, current_day);
+        }, currentYear, currentMonth, currentDay);
         datePickerDialog.show();
     }
 
@@ -276,5 +272,20 @@ public class CreateEventActivity extends BaseActivity implements OnMapReadyCallb
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.transition_left_to_right, R.anim.transition_left_to_right_out);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }

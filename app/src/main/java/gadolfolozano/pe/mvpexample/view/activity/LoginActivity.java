@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +30,6 @@ import gadolfolozano.pe.mvpexample.viewmodel.LoginViewModel;
 public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding mBinding;
-    //private EventAdapter mAlbumAdapter;
 
     private LoginViewModel viewModel;
 
@@ -53,12 +52,6 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void prepareActivity() {
-        /*mAlbumAdapter = new EventAdapter(new ArrayList<AlbumModel>());
-        mBinding.mRecyclerView.setHasFixedSize(true);
-        mBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mBinding.mRecyclerView.setAdapter(mAlbumAdapter);*/
-
         mAuth = FirebaseAuth.getInstance();
 
         viewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
@@ -66,7 +59,6 @@ public class LoginActivity extends BaseActivity {
         viewModel.getAlbums().observe(this, new Observer<ModelResponse<List<AlbumModel>>>() {
             @Override
             public void onChanged(@Nullable ModelResponse<List<AlbumModel>> modelResponse) {
-                //mAlbumAdapter.replaceElements(albumModels);
             }
         });
     }
@@ -83,7 +75,6 @@ public class LoginActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        Toast.makeText(this, "currentUser: " + currentUser, Toast.LENGTH_LONG).show();
         if (currentUser == null) {
             navigateToSignIn();
         } else {
@@ -108,5 +99,18 @@ public class LoginActivity extends BaseActivity {
     public void navigateToMainActivity() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+        overridePendingTransition(R.anim.transition_right_to_left, R.anim.transition_right_to_left_out);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (fragment != null && fragment instanceof RegisterFragment) {
+            navigateToSignIn();
+            return;
+        }
+
+        super.onBackPressed();
     }
 }

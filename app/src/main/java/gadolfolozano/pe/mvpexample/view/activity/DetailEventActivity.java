@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -53,7 +52,7 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
 
     private GoogleMap mGoogleMap;
 
-    private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 101;
 
     public static final String EXTRA_EVENT = "bundle_event";
 
@@ -65,11 +64,6 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
     EventViewModel viewModel;
 
     private EventModel eventModel;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     protected void bindViews() {
@@ -161,6 +155,10 @@ public class DetailEventActivity extends BaseActivity implements OnMapReadyCallb
                 return true;
             case R.id.action_show_erolled:
                 showEnrolled();
+                return true;
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.transition_left_to_right, R.anim.transition_left_to_right_out);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

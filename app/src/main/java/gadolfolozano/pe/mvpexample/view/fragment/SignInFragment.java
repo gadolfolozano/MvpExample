@@ -32,7 +32,7 @@ import gadolfolozano.pe.mvpexample.viewmodel.UserViewModel;
 
 public class SignInFragment extends BaseFragment {
 
-    private final String TAG = SignInFragment.class.getSimpleName();
+    private static final String TAG = SignInFragment.class.getSimpleName();
 
     private FragmentSignInBinding mBinding;
 

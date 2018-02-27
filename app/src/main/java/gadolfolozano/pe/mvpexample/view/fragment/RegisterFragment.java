@@ -32,7 +32,7 @@ import gadolfolozano.pe.mvpexample.viewmodel.UserViewModel;
 
 public class RegisterFragment extends BaseFragment {
 
-    private final String TAG = RegisterFragment.class.getSimpleName();
+    private static final String TAG = RegisterFragment.class.getSimpleName();
 
     private FragmentRegisterBinding mBinding;
 
@@ -78,7 +78,6 @@ public class RegisterFragment extends BaseFragment {
                 switch (modelResponse.getStatus()){
                     case ModelResponse.SUCCESS:
                         UserEntity userEntity = modelResponse.getBody();
-                        Toast.makeText(getContext(), " register currentUser: " + userEntity.getEmailAddress(), Toast.LENGTH_LONG).show();
                         ((LoginActivity) getActivity()).navigateToMainActivity();
                         break;
                     case ModelResponse.ERROR:
@@ -108,12 +107,12 @@ public class RegisterFragment extends BaseFragment {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Do Nothing
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Do Nothing
             }
 
             @Override

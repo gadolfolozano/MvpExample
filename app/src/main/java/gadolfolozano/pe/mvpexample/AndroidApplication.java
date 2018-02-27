@@ -2,10 +2,11 @@ package gadolfolozano.pe.mvpexample;
 
 import android.app.Application;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import gadolfolozano.pe.mvpexample.di.HasComponent;
 import gadolfolozano.pe.mvpexample.di.component.ApplicationComponent;
 import gadolfolozano.pe.mvpexample.di.component.DaggerApplicationComponent;
-import gadolfolozano.pe.mvpexample.di.module.ApplicationModule;
 
 /**
  * Created by gustavo.lozano on 2/20/2018.
@@ -17,12 +18,12 @@ public class AndroidApplication extends Application implements HasComponent<Appl
     @Override
     public void onCreate() {
         super.onCreate();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         initializeInjector();
     }
 
     private void initializeInjector() {
         this.applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
                 .build();
     }
 

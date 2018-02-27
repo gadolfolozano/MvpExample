@@ -40,7 +40,7 @@ import gadolfolozano.pe.mvpexample.viewmodel.EventViewModel;
 
 public class EventsFragment extends BaseFragment {
 
-    private final String TAG = EventsFragment.class.getSimpleName();
+    private static final String TAG = EventsFragment.class.getSimpleName();
 
     private FragmentEventsBinding mBinding;
 
@@ -99,6 +99,7 @@ public class EventsFragment extends BaseFragment {
         Intent intent = new Intent(getActivity(), DetailEventActivity.class);
         intent.putExtra(DetailEventActivity.EXTRA_EVENT, selectedItem);
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.transition_right_to_left, R.anim.transition_right_to_left_out);
     }
 
     @Override

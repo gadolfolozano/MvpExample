@@ -2,11 +2,11 @@ package gadolfolozano.pe.mvpexample.view.activity;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,11 +27,6 @@ public class MainActivity extends BaseActivity {
     private ActivityMainBinding mBinding;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     protected void bindViews() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
     }
@@ -47,6 +42,27 @@ public class MainActivity extends BaseActivity {
                 onFabClicked();
             }
         });
+        mBinding.fab.setVisibility(View.GONE);
+        mBinding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //Do Nothing
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position==1) {
+                    mBinding.fab.setVisibility(View.VISIBLE);
+                } else {
+                    mBinding.fab.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //Do Nothing
+            }
+        });
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -60,6 +76,7 @@ public class MainActivity extends BaseActivity {
 
     private void navigateToCreateEvent() {
         startActivityForResult(new Intent(this, CreateEventActivity.class), CREATE_EVENT_REQUEST);
+        overridePendingTransition(R.anim.transition_right_to_left, R.anim.transition_right_to_left_out);
     }
 
     @Override
@@ -69,6 +86,7 @@ public class MainActivity extends BaseActivity {
             case CREATE_EVENT_REQUEST:
                 if (resultCode == RESULT_OK) {
                     ((EventsFragment) mBinding.viewPager.getAdapter().instantiateItem(mBinding.viewPager, 0)).loadEvents();
+                    ((EventsFragment) mBinding.viewPager.getAdapter().instantiateItem(mBinding.viewPager, 1)).loadEvents();
                 }
                 break;
         }
@@ -77,10 +95,12 @@ public class MainActivity extends BaseActivity {
     private void navigateToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+        overridePendingTransition(R.anim.transition_left_to_right, R.anim.transition_left_to_right_out);
     }
 
     @Override
     protected void initializeInjector() {
+        //Do nothing
     }
 
     @Override
