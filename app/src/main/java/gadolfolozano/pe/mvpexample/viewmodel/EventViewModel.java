@@ -9,6 +9,7 @@ import java.util.List;
 import gadolfolozano.pe.mvpexample.data.repository.EventRepository;
 import gadolfolozano.pe.mvpexample.view.model.EventModel;
 import gadolfolozano.pe.mvpexample.view.model.ModelResponse;
+import gadolfolozano.pe.mvpexample.view.model.UserModel;
 
 /**
  * Created by adolfo on 25/02/18.
@@ -39,6 +40,10 @@ public class EventViewModel extends ViewModel {
 
     public LiveData<ModelResponse<EventModel>> enrollToEvent(String eventId, String userId) {
         return eventRepository.enrollToEvent(eventId, userId);
+    }
+
+    public LiveData<ModelResponse<List<UserModel>>> getEnrolleds(String eventId){
+        return eventRepository.getEnrolleds(eventId);
     }
 
     public static class Factory implements ViewModelProvider.Factory {

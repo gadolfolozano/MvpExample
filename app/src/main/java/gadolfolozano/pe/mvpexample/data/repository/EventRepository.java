@@ -133,4 +133,28 @@ public class EventRepository {
         return data;
     }
 
+    public LiveData<ModelResponse<List<UserModel>>> getEnrolleds(String eventId) {
+        DatabaseReference ref = mDatabase.getReference("events").child(eventId).child("enrolled");
+
+        final MutableLiveData<ModelResponse<List<UserModel>>> data = new MutableLiveData<>();
+        final ModelResponse<List<UserModel>> modelResponse = new ModelResponse<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<UserModel> userModels = new ArrayList<>();
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    UserModel userModel = postSnapshot.getValue(UserModel.class);
+                    userModels.add(userModel);
+                }
+                data.setValue(modelResponse.createSucces(userModels));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                data.setValue(modelResponse.createError(null));
+            }
+        });
+        return data;
+    }
+
 }
